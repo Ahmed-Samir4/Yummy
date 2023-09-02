@@ -113,3 +113,10 @@ i {
     text-align: center;
     border-radius: 0.375rem !important;
 }
+
+.contact{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,7 +1,9 @@
 /// <reference path="../typings/globals/jquery/index.d.ts" />
 const rowData = document.getElementById('rowData');
 
-
+function InnerLoading() {
+    $('.inner-loading-screen').removeAttr('style').fadeOut(500);
+}
 function N(length) {
     if (length < 20) {
         return length;
@@ -30,6 +32,13 @@ $('.open-close-icon').click(function () {
     }
 })
 
+
+
+//initialPage
+async function initialPage() {
+    searchName('');
+}
+
 //displayMeals
 function displayMeals(Data, n) {
     let temp = '';
@@ -47,13 +56,6 @@ function displayMeals(Data, n) {
     }
     rowData.innerHTML = temp;
 }
-
-//initialPage
-async function initialPage() {
-    const resp = await fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=');
-    const initialData = await resp.json();
-    displayMeals(initialData.meals, N(initialData.meals.length));
-}
 async function MealDetails(id) {
     $('.search').addClass('d-none');
     $('html').css('overflow-y ', 'hidden');
@@ -61,7 +63,7 @@ async function MealDetails(id) {
     const temp = await resp.json();
 
     let mealData = temp.meals[0];
-    console.log(mealData);
+    
     //get recipes li
     let recipes = '';
     let i = 1;
@@ -111,6 +113,7 @@ async function MealDetails(id) {
 
 //----------Categories---------------
 async function getCategories() {
+    InnerLoading()
     closeNav()
     $('.search').addClass('d-none');
     const resp = await fetch('https://www.themealdb.com/api/json/v1/1/categories.php')
@@ -140,6 +143,7 @@ async function getCategoryMeals(Category) {
 
 //----------Areas---------------
 async function getAreas() {
+    InnerLoading()
     closeNav()
     $('.search').addClass('d-none');
     const resp = await fetch('https://www.themealdb.com/api/json/v1/1/list.php?a=list')
@@ -166,6 +170,7 @@ async function getAreaMeals(Area) {
 
 //----------Ingredients---------------
 async function getIngredients() {
+    InnerLoading()
     closeNav()
     $('.search').addClass('d-none');
     const resp = await fetch('https://www.themealdb.com/api/json/v1/1/list.php?i=list')
@@ -193,6 +198,7 @@ async function getIngredientsMeals(Ingredient) {
 
 //----------Search---------------
 function getSearch() {
+    InnerLoading()
     closeNav()
     $('.search').removeClass('d-none');
     rowData.innerHTML = '';
@@ -209,7 +215,6 @@ async function searchName(name) {
     }
 
 }
-
 async function searchLetter(letter) {
     const resp = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?f=${letter}`);
     const letterInfo = await resp.json();
@@ -221,5 +226,141 @@ async function searchLetter(letter) {
     }
 }
 
+//----------Contact---------------
+function getContact() {
+    InnerLoading()
+    closeNav()
+    rowData.innerHTML = `<div class="contact">
+    <div class="container w-75 text-center">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <input onkeyup="contactValidation()" type="text" class="nameInput form-control"
+                    placeholder="Enter Your Name">
+                <div class="nameAlert alert alert-danger w-100 mt-2 d-none">
+                    Special characters and numbers not allowed
+                </div>
+            </div>
+            <div class="col-md-6">
+                <input onkeyup="contactValidation()" type="email" class="emailInput form-control "
+                    placeholder="Enter Your Email" >
+                <div class="emailAlert alert alert-danger w-100 mt-2 d-none">
+                    Email not valid *exemple@yyy.zzz
+                </div>
+            </div>
+            <div class="col-md-6">
+                <input onkeyup="contactValidation()" type="text" class="phoneInput form-control "
+                    placeholder="Enter Your Phone" >
+                <div class="phoneAlert alert alert-danger w-100 mt-2 d-none">
+                    Enter valid Phone Number
+                </div>
+            </div>
+            <div class="col-md-6">
+                <input onkeyup="contactValidation()" type="number" class="ageInput form-control "
+                    placeholder="Enter Your Age" >
+                <div class="ageAlert alert alert-danger w-100 mt-2 d-none">
+                    Enter valid age
+                </div>
+            </div>
+            <div class="col-md-6">
+                <input onkeyup="contactValidation()" type="password"
+                    class="passwordInput form-control " placeholder="Enter Your Password" >
+                <div class="passwordAlert alert alert-danger w-100 mt-2 d-none">
+                    Enter valid password *Minimum eight characters, at least one letter and one number:*
+                </div>
+            </div>
+            <div class="col-md-6">
+                <input onkeyup="contactValidation()" type="password"
+                    class="repasswordInput form-control " placeholder="Repassword">
+                <div class="repasswordAlert alert alert-danger w-100 mt-2 d-none">
+                    Enter valid repassword
+                </div>
+            </div>
+        </div>
+        <button disabled="" class="submitBtn btn btn-outline-danger px-2 mt-3">Submit</button>
+    </div>
+    </div>`;
+    $('.nameInput').val('');
+    $('.emailInput').val('');
+    $('.phoneInput').val('');
+    $('.ageInput').val('');
+    $('.passwordInput').val('');
+    $('.repasswordInput').val('');
+}
+const nameR = /^[a-zA-Z ]+$/;
+const emailR = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const phoneR = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+const ageR = /^(0?[1-9]|[1-9][0-9]|[1][1-9][1-9]|200)$/;
+const passwordR = /^(?=.*\d)(?=.*[a-z])[0-9a-zA-Z]{8,}$/;
 
-// initialPage();
+function contactValidation() {
+    let flag1 = false, flag2 = false, flag3 = false, flag4 = false, flag5 = false, flag6 = false;
+    if (nameR.test($('.nameInput').val())) {
+        flag1 = true;
+        $('.nameAlert').addClass('d-none');
+    } else {
+        $('.nameAlert').removeClass('d-none');
+        flag1 = false;
+    }
+
+    if (emailR.test($('.emailInput').val())) {
+        flag2 = true;
+        $('.emailAlert').addClass('d-none');
+    } else {
+        $('.emailAlert').removeClass('d-none');
+        flag2 = false;
+    }
+
+    if (phoneR.test($('.phoneInput').val())) {
+        flag3 = true;
+        $('.phoneAlert').addClass('d-none');
+    } else {
+        $('.phoneAlert').removeClass('d-none');
+        flag3 = false;
+    }
+
+    if (ageR.test($('.ageInput').val())) {
+        flag4 = true;
+        $('.ageAlert').addClass('d-none');
+    } else {
+        $('.ageAlert').removeClass('d-none');
+        flag4 = false;
+    }
+
+    if (passwordR.test($('.passwordInput').val())) {
+        flag5 = true;
+        $('.passwordAlert').addClass('d-none');
+    } else {
+        $('.passwordAlert').removeClass('d-none');
+        flag5 = false;
+    }
+
+
+    if ($('.repasswordInput').val() == $('.passwordInput').val()) {
+        flag6 = true;
+        $('.repasswordAlert').addClass('d-none');
+    } else {
+        $('.repasswordAlert').removeClass('d-none');
+        flag6 = false;
+    }
+    console.log(flag1);
+    console.log(flag2);
+
+    console.log(flag3);
+
+    console.log($('.nameInput').val());
+
+    if (flag1 && flag2 && flag3 && flag4 && flag5 && flag6) {
+        $('.submitBtn').removeAttr('disabled');
+    } else {
+        $('.submitBtn').attr('disabled','');
+    }
+
+}
+
+$(document).ready(function() {
+    initialPage().then(function(){
+        // $(".loading-screen").fadeOut(500)
+        $("body").css("overflow", "visible")
+
+    })
+})
