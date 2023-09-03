@@ -228,7 +228,13 @@ async function searchName(name) {
 }
 async function searchLetter(letter) {
     ShowInnerLoading();
-    const resp = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?f=${letter}`);
+    let resp;
+    if (letter) {
+        resp = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?f=${letter}`);
+    } else {
+        resp = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?f=a`);
+    }
+
     const letterInfo = await resp.json();
     // console.log(letterInfo.meals);
     if (letterInfo.meals == null) {
