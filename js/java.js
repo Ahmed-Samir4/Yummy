@@ -1,8 +1,11 @@
 /// <reference path="../typings/globals/jquery/index.d.ts" />
 const rowData = document.getElementById('rowData');
 
-function InnerLoading() {
-    $('.inner-loading-screen').removeAttr('style').fadeOut(500);
+function ShowInnerLoading() {
+    $('.inner-loading-screen').fadeIn(300);
+}
+function HideInnerLoading() {
+    $('.inner-loading-screen').fadeOut(300);
 }
 function N(length) {
     if (length < 20) {
@@ -34,10 +37,7 @@ $('.open-close-icon').click(function () {
 
 
 
-//initialPage
-async function initialPage() {
-    searchName('');
-}
+
 
 //displayMeals
 function displayMeals(Data, n) {
@@ -57,13 +57,15 @@ function displayMeals(Data, n) {
     rowData.innerHTML = temp;
 }
 async function MealDetails(id) {
+    ShowInnerLoading();
+    closeNav();
     $('.search').addClass('d-none');
     $('html').css('overflow-y ', 'hidden');
     const resp = await fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
     const temp = await resp.json();
 
     let mealData = temp.meals[0];
-    
+
     //get recipes li
     let recipes = '';
     let i = 1;
@@ -109,16 +111,18 @@ async function MealDetails(id) {
     <a target="_blank" href="${mealData.strYoutube}"
         class="btn btn-danger">Youtube</a>
 </div>`
+    HideInnerLoading();
 }
 
 //----------Categories---------------
 async function getCategories() {
-    InnerLoading()
+    ShowInnerLoading();
     closeNav()
     $('.search').addClass('d-none');
     const resp = await fetch('https://www.themealdb.com/api/json/v1/1/categories.php')
     const CategoriesData = await resp.json();
     displayCategories(CategoriesData.categories);
+    HideInnerLoading();
 }
 function displayCategories(data) {
     let temp = '';
@@ -136,19 +140,22 @@ function displayCategories(data) {
     rowData.innerHTML = temp;
 }
 async function getCategoryMeals(Category) {
+    ShowInnerLoading();
     const resp = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${Category}`);
     const CategoryData = await resp.json();
     displayMeals(CategoryData.meals, N(CategoryData.meals.length));
+    HideInnerLoading();
 }
 
 //----------Areas---------------
 async function getAreas() {
-    InnerLoading()
+    ShowInnerLoading();
     closeNav()
     $('.search').addClass('d-none');
     const resp = await fetch('https://www.themealdb.com/api/json/v1/1/list.php?a=list')
     const AreaData = await resp.json();
     displayArea(AreaData.meals);
+    HideInnerLoading();
 }
 function displayArea(data) {
     let temp = '';
@@ -163,19 +170,22 @@ function displayArea(data) {
     rowData.innerHTML = temp;
 }
 async function getAreaMeals(Area) {
+    ShowInnerLoading();
     const resp = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?a=${Area}`);
     const AreaData = await resp.json();
     displayMeals(AreaData.meals, N(AreaData.meals.length));
+    HideInnerLoading();
 }
 
 //----------Ingredients---------------
 async function getIngredients() {
-    InnerLoading()
+    ShowInnerLoading();
     closeNav()
     $('.search').addClass('d-none');
     const resp = await fetch('https://www.themealdb.com/api/json/v1/1/list.php?i=list')
     const IngredientsData = await resp.json();
     displayIngredients(IngredientsData.meals);
+    HideInnerLoading();
 }
 function displayIngredients(data) {
     let temp = '';
@@ -191,14 +201,15 @@ function displayIngredients(data) {
     rowData.innerHTML = temp;
 }
 async function getIngredientsMeals(Ingredient) {
+    ShowInnerLoading();
     const resp = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${Ingredient}`);
     const IngredientData = await resp.json();
     displayMeals(IngredientData.meals, N(IngredientData.meals.length));
+    HideInnerLoading();
 }
 
 //----------Search---------------
 function getSearch() {
-    InnerLoading()
     closeNav()
     $('.search').removeClass('d-none');
     rowData.innerHTML = '';
@@ -216,6 +227,7 @@ async function searchName(name) {
 
 }
 async function searchLetter(letter) {
+    ShowInnerLoading();
     const resp = await fetch(`https://www.themealdb.com/api/json/v1/1/search.php?f=${letter}`);
     const letterInfo = await resp.json();
     // console.log(letterInfo.meals);
@@ -224,52 +236,53 @@ async function searchLetter(letter) {
     } else {
         displayMeals(letterInfo.meals, letterInfo.meals.length);
     }
+    HideInnerLoading();
 }
 
 //----------Contact---------------
 function getContact() {
-    InnerLoading()
     closeNav()
+    $('.search').addClass('d-none');
     rowData.innerHTML = `<div class="contact">
     <div class="container w-75 text-center">
         <div class="row g-4">
             <div class="col-md-6">
-                <input onkeyup="contactValidation()" type="text" class="nameInput form-control"
+                <input onkeyup="nameValidation()" type="text" class="nameInput form-control"
                     placeholder="Enter Your Name">
                 <div class="nameAlert alert alert-danger w-100 mt-2 d-none">
                     Special characters and numbers not allowed
                 </div>
             </div>
             <div class="col-md-6">
-                <input onkeyup="contactValidation()" type="email" class="emailInput form-control "
+                <input onkeyup="emailValidation()" type="email" class="emailInput form-control "
                     placeholder="Enter Your Email" >
                 <div class="emailAlert alert alert-danger w-100 mt-2 d-none">
                     Email not valid *exemple@yyy.zzz
                 </div>
             </div>
             <div class="col-md-6">
-                <input onkeyup="contactValidation()" type="text" class="phoneInput form-control "
+                <input onkeyup="phoneValidation()" type="text" class="phoneInput form-control "
                     placeholder="Enter Your Phone" >
                 <div class="phoneAlert alert alert-danger w-100 mt-2 d-none">
                     Enter valid Phone Number
                 </div>
             </div>
             <div class="col-md-6">
-                <input onkeyup="contactValidation()" type="number" class="ageInput form-control "
+                <input onkeyup="ageValidation()" type="number" class="ageInput form-control "
                     placeholder="Enter Your Age" >
                 <div class="ageAlert alert alert-danger w-100 mt-2 d-none">
                     Enter valid age
                 </div>
             </div>
             <div class="col-md-6">
-                <input onkeyup="contactValidation()" type="password"
+                <input onkeyup="passValidation()" type="password"
                     class="passwordInput form-control " placeholder="Enter Your Password" >
                 <div class="passwordAlert alert alert-danger w-100 mt-2 d-none">
                     Enter valid password *Minimum eight characters, at least one letter and one number:*
                 </div>
             </div>
             <div class="col-md-6">
-                <input onkeyup="contactValidation()" type="password"
+                <input onkeyup="repassValidation()" type="password"
                     class="repasswordInput form-control " placeholder="Repassword">
                 <div class="repasswordAlert alert alert-danger w-100 mt-2 d-none">
                     Enter valid repassword
@@ -291,9 +304,9 @@ const emailR = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[
 const phoneR = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
 const ageR = /^(0?[1-9]|[1-9][0-9]|[1][1-9][1-9]|200)$/;
 const passwordR = /^(?=.*\d)(?=.*[a-z])[0-9a-zA-Z]{8,}$/;
+let flag1 = false, flag2 = false, flag3 = false, flag4 = false, flag5 = false, flag6 = false;
 
-function contactValidation() {
-    let flag1 = false, flag2 = false, flag3 = false, flag4 = false, flag5 = false, flag6 = false;
+function nameValidation() {
     if (nameR.test($('.nameInput').val())) {
         flag1 = true;
         $('.nameAlert').addClass('d-none');
@@ -301,7 +314,9 @@ function contactValidation() {
         $('.nameAlert').removeClass('d-none');
         flag1 = false;
     }
-
+    contactValidation()
+}
+function emailValidation() {
     if (emailR.test($('.emailInput').val())) {
         flag2 = true;
         $('.emailAlert').addClass('d-none');
@@ -309,7 +324,9 @@ function contactValidation() {
         $('.emailAlert').removeClass('d-none');
         flag2 = false;
     }
-
+    contactValidation()
+}
+function phoneValidation() {
     if (phoneR.test($('.phoneInput').val())) {
         flag3 = true;
         $('.phoneAlert').addClass('d-none');
@@ -317,7 +334,9 @@ function contactValidation() {
         $('.phoneAlert').removeClass('d-none');
         flag3 = false;
     }
-
+    contactValidation()
+}
+function ageValidation() {
     if (ageR.test($('.ageInput').val())) {
         flag4 = true;
         $('.ageAlert').addClass('d-none');
@@ -325,7 +344,9 @@ function contactValidation() {
         $('.ageAlert').removeClass('d-none');
         flag4 = false;
     }
-
+    contactValidation()
+}
+function passValidation() {
     if (passwordR.test($('.passwordInput').val())) {
         flag5 = true;
         $('.passwordAlert').addClass('d-none');
@@ -333,8 +354,9 @@ function contactValidation() {
         $('.passwordAlert').removeClass('d-none');
         flag5 = false;
     }
-
-
+    contactValidation()
+}
+function repassValidation() {
     if ($('.repasswordInput').val() == $('.passwordInput').val()) {
         flag6 = true;
         $('.repasswordAlert').addClass('d-none');
@@ -342,25 +364,27 @@ function contactValidation() {
         $('.repasswordAlert').removeClass('d-none');
         flag6 = false;
     }
-    console.log(flag1);
-    console.log(flag2);
-
-    console.log(flag3);
-
-    console.log($('.nameInput').val());
+    contactValidation()
+}
+function contactValidation() {
 
     if (flag1 && flag2 && flag3 && flag4 && flag5 && flag6) {
         $('.submitBtn').removeAttr('disabled');
     } else {
-        $('.submitBtn').attr('disabled','');
+        $('.submitBtn').attr('disabled', '');
     }
 
 }
 
-$(document).ready(function() {
-    initialPage().then(function(){
-        // $(".loading-screen").fadeOut(500)
-        $("body").css("overflow", "visible")
 
-    })
+//initialPage
+async function initialPage() {
+    searchName('');
+    $(".loading-screen").delay(500).fadeOut(500);
+    $('.sideNavbar').animate({ left: '-256.562px' }, 750);
+
+
+}
+$(document).ready(function () {
+    initialPage()
 })

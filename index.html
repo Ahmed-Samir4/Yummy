@@ -14,6 +14,10 @@
 </head>
 
 <body>
+    <!-- initial loading -->
+    <div class="loading-screen">
+        <i class=" fa fa-spinner fa-spin fa-5x"></i>
+    </div>
 
     <div class="sideNavbar">
         <div class="navMenu">
@@ -57,7 +61,7 @@
         <div class="search container d-none w-75" id="searchContainer">
             <div class="row py-4 ">
                 <div class="col-md-6 ">
-                    <input onkeyup="searchName(this.value)" class="form-control bg-transparent text-white" type="text"
+                    <input onkeyup="ShowInnerLoading();searchName(this.value);HideInnerLoading()" class="form-control bg-transparent text-white" type="text"
                         placeholder="Search By Name">
                 </div>
                 <div class="col-md-6">
@@ -71,13 +75,9 @@
         <div class="container">
             <div class="row py-5 g-4 " id="rowData">
 
-                
+
             </div>
         </div>
-
-
-
-
 
 
 
